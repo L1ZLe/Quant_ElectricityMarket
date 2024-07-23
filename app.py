@@ -12,8 +12,8 @@ from visualizations import plot_predictions, plot_equity_curve,waiting_statement
 import numpy as np
 import os
 from dotenv import find_dotenv, load_dotenv
+import openpyxl
 
-global backtest_results
 
 # Load data
 data_whole = pd.read_csv(r"C:\Users\Sami El yaagoubi\Desktop\capstone\datasets\Data_cleaned_Dataset.csv", parse_dates=['Trade Date', 'Electricity: Delivery Start Date', 'Electricity: Delivery End Date'])
@@ -657,7 +657,6 @@ def trading_strategies():
         st.write(trades)
 
 def backtesting():
-    global backtest_results
     data_whole = pd.read_csv(r"C:\Users\Sami El yaagoubi\Desktop\capstone\datasets\Data_cleaned_Dataset.csv", parse_dates=['Trade Date', 'Electricity: Delivery Start Date', 'Electricity: Delivery End Date'])
     data_whole = data_whole[['Electricity: Wtd Avg Price $/MWh', 'Trade Date']]
     
@@ -680,29 +679,34 @@ def backtesting():
     elif selected_strategy == "Break of Structure":
         backtest_results = run_BOS_strategy(starting_amount, data_whole)
     
+    if backtest_results is not None:
+        st.write("Backtest completed.")
+        st.session_state['backtest_results'] = backtest_results
+        st.session_state['strategy_name'] = selected_strategy
+        export_results()
+
 
 
 def export_results():
-    global backtest_results
-    st.write(backtest_results)
-    
-    st.title("Export Results")
-    st.write("Provide options to export backtesting results.")
+    if 'backtest_results' in st.session_state and 'strategy_name' in st.session_state:
+        backtest_results = st.session_state['backtest_results']
+        strategy_name = st.session_state['strategy_name']
+        
+        st.write(backtest_results)
+        st.title("Export Results")
+        st.write("Provide options to export backtesting results.")
+        
+        export_format = st.radio("Choose export format", ("CSV", "Excel"))
 
-    strategies = ["Percentile-based Strategy (Mean Reversion)", "Break of Structure"]
-    selected_strategy = st.selectbox("Select a strategy for export", strategies)
-
-    if backtest_results is not None:
-        if st.button("Export to CSV"):
-            backtest_results.to_csv(f'{selected_strategy}_backtest_results.csv')
-            st.write("Results exported to CSV.")
-        if st.button("Export to Excel"):
-            backtest_results.to_excel(f'{selected_strategy}_backtest_results.xlsx')
-            st.write("Results exported to Excel.")
+        if st.button("Export"):
+            if export_format == "CSV":
+                backtest_results.to_csv(f'{strategy_name}_backtest_results.csv')
+                st.write("Results exported to CSV.")
+            elif export_format == "Excel":
+                backtest_results.to_excel(f'{strategy_name}_backtest_results.xlsx')
+                st.write("Results exported to Excel.")
     else:
-        st.write("No results available for export. Please run a backtest first.")
-
-
+        st.title("No results available for export. Please run a backtest first.")
 def contact():
     st.title("Contact Us")
     st.write("User feedback form.")

@@ -62,7 +62,8 @@ def run_percentile_strategy(starting_amount, data):
 
         total_roi = calculate_ROI(data)
         final_balance_plotting(starting_amount, total_roi, data, start_idx, end_idx)
-    return data
+        return data
+    
 
 def run_BOS_strategy(starting_amount, data):
     start_date = st.date_input("Start Date for Plot", data['Trade Date'].min())
@@ -76,7 +77,7 @@ def run_BOS_strategy(starting_amount, data):
         data = BOS_logic(data.iloc[start_idx:end_idx], starting_amount)
         total_roi = calculate_ROI(data)
         final_balance_plotting(starting_amount, total_roi, data, start_idx, end_idx)
-    return data
+        return data
 
 def BOS_logic(data, initial_capital):
     # Store the Trade Date column
