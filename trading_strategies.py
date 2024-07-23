@@ -198,3 +198,10 @@ def get_latest_high_and_low(data, start_date, extrems_date, initial_trend, new_t
 
         return high, low, close, start_date, extrems_date
 
+def descriptions(strategy):
+    descriptions={
+        "Break of Structure":"involves identifying a change in the market trend. Traders buy when the price breaks above a previous high, indicating a potential upward trend, and sell when the price breaks below a previous low, indicating a potential downward trend.",
+        "Percentile Channel Breakout (Mean Reversion)":"involves buying when the price falls below a lower percentile and selling when it rises above an upper percentile of recent price data.",
+        
+    }
+    st.write(descriptions.get(strategy))
